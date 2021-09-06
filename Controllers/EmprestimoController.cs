@@ -23,6 +23,9 @@ namespace Biblioteca.Controllers
         [HttpPost]
         public IActionResult Cadastro(CadEmprestimoViewModel viewModel)
         {
+            if(!string.IsNullOrEmpty(viewModel.Emprestimo.NomeUsuario)){
+
+            
             EmprestimoService emprestimoService = new EmprestimoService();
             
             if(viewModel.Emprestimo.Id == 0)
@@ -34,6 +37,20 @@ namespace Biblioteca.Controllers
                 emprestimoService.Atualizar(viewModel.Emprestimo);
             }
             return RedirectToAction("Listagem");
+            }
+            else{
+                ViewData["mensagem"]="Por favor, Preencha todos os campos";
+
+                LivroService livroservice = new LivroService();
+                EmprestimoService emprestimoservice = new EmprestimoService();
+
+                CadEmprestimoViewModel cadModel = new CadEmprestimoViewModel();
+
+                cadModel.Livros = livroservice.ListarDisponiveis();
+
+                return View(cadModel);
+
+            }
         }
 
         public IActionResult Listagem(string tipoFiltro, string filtro)
@@ -58,7 +75,8 @@ namespace Biblioteca.Controllers
             Emprestimo e = em.ObterPorId(id);
 
             CadEmprestimoViewModel cadModel = new CadEmprestimoViewModel();
-            cadModel.Livros = livroService.ListarTodos();
+            cadModel.Livros = livroService.ListarDisponiveis();
+            cadModel.Livros.Add(livroService.ObterPorId(e.LivroId));
             cadModel.Emprestimo = e;
             
             return View(cadModel);
