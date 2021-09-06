@@ -9,7 +9,7 @@ namespace Biblioteca.Models
         public void Inserir(Emprestimo e)
         {
             using(BibliotecaContext bc = new BibliotecaContext())
-            {
+            {   
                 bc.Emprestimos.Add(e);
                 bc.SaveChanges();
             }
